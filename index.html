@@ -1,0 +1,1517 @@
+<html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全球网址大全 - 多语言版</title>
+    <!-- 引入外部外部资源 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/7.0.0/css/all.css" rel="stylesheet">
+    <script src="https://cdn.bootcdn.net/ajax/libs/Chart.js/4.5.0/chart.umd.js"></script>
+    
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#36CFC9',
+                        accent: '#722ED1',
+                        neutral: '#86909C',
+                        light: '#F2F3F5',
+                        dark: '#1D2129'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .card-shadow {
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            }
+            .card-hover {
+                transition: all 0.3s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            }
+            .text-balance {
+                text-wrap: balance;
+            }
+            .hide-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+            .hide-scrollbar {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        }
+    </style>
+    
+    <style>
+        /* 全局动画定义 */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 平滑滚动 */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* 加载动画 */
+        .loader {
+            border-top-color: #165DFF;
+            animation: spinner 0.6s linear infinite;
+        }
+        
+        @keyframes spinner {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 模态框样式 */
+        .modal-backdrop {
+            backdrop-filter: blur(4px);
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-content {
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-open .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        /* 通知提示 */
+        .toast {
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        /* 保护信息样式 */
+        .protected-info {
+            user-select: none;
+            pointer-events: none;
+        }
+        
+        /* 新添加网站的标记样式 */
+        .new-site-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #165DFF;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="font-inter bg-gray-50 text-dark">
+    <!-- 顶部导航栏 -->
+    <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-sm shadow-sm">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <!-- 网站Logo -->
+            <div class="flex items-center space-x-2">
+                <div class="text-primary text-2xl">
+                    <i class="fa fa-globe"></i>
+                </div>
+                <h1 class="text-xl font-bold text-primary">WebLink<span class="text-accent">Hub</span></h1>
+            </div>
+            
+            <!-- 搜索框 - 仅在中等屏幕以上显示 -->
+            <div class="hidden md:flex relative flex-1 max-w-xl mx-8">
+                <input type="text" id="search-input" class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all" placeholder="搜索网站...">
+                <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-neutral"></i>
+            </div>
+            
+            <!-- 右侧功能区 -->
+            <div class="flex items-center space-x-4">
+                <!-- 语言选择器 -->
+                <div class="relative group">
+                    <button id="language-btn" class="flex items-center space-x-1 px-3 py-1.5 rounded-full border border border-gray-200 hover:bg-light transition-colors">
+                        <i class="fa fa-language text-neutral"></i>
+                        <span id="current-language">中文</span>
+                        <i class="fa fa fa-chevron-down text-xs text-neutral"></i>
+                    </button>
+                    
+                    <!-- 语言下拉菜单 -->
+                    <div id="language-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg overflow-hidden hidden group-hover:block z-50">
+                        <ul class="divide-y divide-gray-100">
+                            <li><a href="#" data-lang="zh" class="language-option block px-4 py-2 hover:bg-light transition-colors">中文</a></li>
+                            <li><a href="#" data-lang="en" class="language-option block px-4 py-2 hover:bg-light transition-colors">English</a></li>
+                            <li><a href="#" data-lang="ja" class="language-option block px-4 py-2 hover:bg-light transition-colors">日本語</a></li>
+                            <li><a href="#" data-lang="ko" class="language-option block px-4 py-2 hover:bg-light transition-colors">한국어</a></li>
+                            <li><a href="#" data-lang="fr" class="language-option block px-4 py-2 hover:bg-light transition-colors">Français</a></li>
+                            <li><a href="#" data-lang="es" class="language-option block px-4 py-2 hover:bg-light transition-colors">Español</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 主题切换 -->
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-light transition-colors">
+                    <i class="fa fa-moon-o text-neutral"></i>
+                </button>
+                
+                <!-- 移动端菜单按钮 -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-full hover:bg-light transition-colors">
+                    <i class="fa fa-bars text-neutral"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端搜索框 -->
+        <div class="md:hidden px-4 pb-3">
+            <div class="relative">
+                <input type="text" id="mobile-search-input" class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all" placeholder="搜索网站...">
+                <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-neutral"></i>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-100 fade-in">
+            <div class="container mx-auto px-4 py-3">
+                <nav>
+                    <ul class="space-y-2">
+                        <li><a href="#all" class="block py-2 px-3 rounded-lg hover:bg-light transition-colors" data-translate="all_sites">所有网站</a></li>
+                        <li><a href="#popular" class="block py-2 px-3 rounded-lg hover:bg-light transition-colors" data-translate="popular_sites">热门网站</a></li>
+                        <li><a href="#categories" class="block py-2 px-3 rounded-lg hover:bg-light transition-colors" data-translate="categories">网站分类</a></li>
+                        <li><a href="#add-site" class="block py-2 px-3 rounded-lg hover:bg-light transition-colors" data-translate="add_website">添加网站</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 pt-28 pb-16">
+        <!-- 欢迎区域 -->
+        <section class="mb-12 text-center fade-in">
+            <h2 class="text-[clamp(1.8rem,4vw,2.8rem)] font-bold mb-4" data-translate="welcome_title">全球网址大全</h2>
+            <p class="text-neutral text-lg max-w-2xl mx-auto mb-8 text-balance" data-translate="welcome_desc">发现世界各地的优质网站，支持多种语言自动翻译，轻松浏览全球网络资源。</p>
+            
+            <!-- 统计数据卡片 -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+                <div class="bg-white rounded-xl p-5 card-shadow card-hover">
+                    <div class="text-primary text-3xl mb-2"><i class="fa fa-sitemap"></i></div>
+                    <p class="text-2xl font-bold">2,500+</p>
+                    <p class="text-neutral text-sm" data-translate="stats_sites">网站数量</p>
+                </div>
+                <div class="bg-white rounded-xl p-5 card-shadow card-hover">
+                    <div class="text-secondary text-3xl mb-2"><i class="fa fa-folder-open"></i></div>
+                    <p class="text-2xl font-bold">42</p>
+                    <p class="text-neutral text-sm" data-translate="stats_categories">分类数量</p>
+                </div>
+                <div class="bg-white rounded-xl p-5 card-shadow card-hover">
+                    <div class="text-accent text-3xl mb-2"><i class="fa fa-language"></i></div>
+                    <p class="text-2xl font-bold">16</p>
+                    <p class="text-neutral text-sm" data-translate="stats_languages">支持语言</p>
+                </div>
+                <div class="bg-white rounded-xl p-5 card-shadow card-hover">
+                    <div class="text-amber-500 text-3xl mb-2"><i class="fa fa-users"></i></div>
+                    <p class="text-2xl font-bold">85k+</p>
+                    <p class="text-neutral text-sm" data-translate="stats_users">月活跃用户</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 热门网站区域 -->
+        <section id="popular" class="mb-16 fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold" data-translate="popular_sites">热门网站</h3>
+                <a href="#all-sites-modal" class="text-primary hover:text-primary/80 flex items-center transition-colors view-more-btn" data-translate="view_all" data-category="popular">
+                    查看全部 <i class="fa fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+            
+            <!-- 热门网站网格 -->
+            <div id="popular-sites-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <!-- 热门网站卡片 -->
+                <a href="https://www.google.com" target="_blank" class="bg-white rounded-xl p-4 flex flex-col items-center text-center card-shadow card-hover relative" data-category="popular search">
+                    <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-3">
+                        <i class="fa fa-google text-xl text-blue-500"></i>
+                    </div>
+                    <h4 class="font-medium" data-translate="site_google">谷歌</h4>
+                    <p class="text-xs text-neutral mt-1">google.com</p>
+                </a>
+                
+                <a href="https://www.youtube.com" target="_blank" class="bg-white rounded-xl p-4 flex flex-col items-center text-center card-shadow card-hover relative" data-category="popular video">
+                    <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-3">
+                        <i class="fa fa-youtube-play text-xl text-red-500"></i>
+                    </div>
+                    <h4 class="font-medium" data-translate="site_youtube">YouTube</h4>
+                    <p class="text-xs text-neutral mt-1">youtube.com</p>
+                </a>
+                
+                <a href="https://www.facebook.com" target="_blank" class="bg-white rounded-xl p-4 flex flex-col items-center text-center card-shadow card-hover relative" data-category="popular social">
+                    <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-3">
+                        <i class="fa fa-facebook text-xl text-blue-600"></i>
+                    </div>
+                    <h4 class="font-medium" data-translate="site_facebook">Facebook</h4>
+                    <p class="text-xs text-neutral mt-1">facebook.com</p>
+                </a>
+                
+                <a href="https://www.twitter.com" target="_blank" class="bg-white rounded-xl p-4 flex flex-col items-center text-center card-shadow card-hover relative" data-category="popular social">
+                    <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-3">
+                        <i class="fa fa-twitter text-xl text-blue-400"></i>
+                    </div>
+                    <h4 class="font-medium" data-translate="site_twitter">Twitter</h4>
+                    <p class="text-xs text-neutral mt-1">twitter.com</p>
+                </a>
+                
+                <a href="https://www.wikipedia.org" target="_blank" class="bg-white rounded-xl p-4 flex flex-col items-center text-center card-shadow card-hover relative" data-category="popular education">
+                    <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-3">
+                        <i class="fa fa-wikipedia-w text-xl text-red-500"></i>
+                    </div>
+                    <h4 class="font-medium" data-translate="site_wikipedia">维基百科</h4>
+                    <p class="text-xs text-neutral mt-1">wikipedia.org</p>
+                </a>
+                
+                <a href="https://www.amazon.com" target="_blank" class="bg-white rounded-xl p-4 flex flex-col items-center text-center card-shadow card-hover relative" data-category="popular shopping">
+                    <div class="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center mb-3">
+                        <i class="fa fa-shopping-cart text-xl text-amber-600"></i>
+                    </div>
+                    <h4 class="font-medium" data-translate="site_amazon">亚马逊</h4>
+                    <p class="text-xs text-neutral mt-1">amazon.com</p>
+                </a>
+                
+                <!-- 新增热门网站 -->
+                <a href="https://www.instagram.com" target="_blank" class="bg-white rounded-xl p-4 flex flex-col items-center text-center card-shadow card-hover relative" data-category="popular social">
+                    <div class="w-12 h-12 rounded-full bg-pink-50 flex items-center justify-center mb-3">
+                        <i class="fa fa-instagram text-xl text-pink-500"></i>
+                    </div>
+                    <h4 class="font-medium" data-translate="site_instagram">Instagram</h4>
+                    <p class="text-xs text-neutral mt-1">instagram.com</p>
+                </a>
+                
+                <a href="https://www.netflix.com" target="_blank" class="bg-white rounded-xl p-4 flex flex-col items-center text-center card-shadow card-hover relative" data-category="popular video">
+                    <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-3">
+                        <i class="fa fa-film text-xl text-red-600"></i>
+                    </div>
+                    <h4 class="font-medium" data-translate="site_netflix">Netflix</h4>
+                    <p class="text-xs text-neutral mt-1">netflix.com</p>
+                </a>
+                
+                <a href="https://www.baidu.com" target="_blank" class="bg-white rounded-xl p-4 flex flex-col items-center text-center card-shadow card-hover relative" data-category="popular search">
+                    <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-3">
+                        <i class="fa fa-paw text-xl text-red-500"></i>
+                    </div>
+                    <h4 class="font-medium" data-translate="site_baidu">百度</h4>
+                    <p class="text-xs text-neutral mt-1">baidu.com</p>
+                </a>
+                
+                <a href="https://www.linkedin.com" target="_blank" class="bg-white rounded-xl p-4 flex flex-col items-center text-center card-shadow card-hover relative" data-category="popular social">
+                    <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-3">
+                        <i class="fa fa-linkedin text-xl text-blue-700"></i>
+                    </div>
+                    <h4 class="font-medium" data-translate="site_linkedin">LinkedIn</h4>
+                    <p class="text-xs text-neutral mt-1">linkedin.com</p>
+                </a>
+                
+                <a href="https://www.taobao.com" target="_blank" class="bg-white rounded-xl p-4 flex flex-col items-center text-center card-shadow card-hover relative" data-category="popular shopping">
+                    <div class="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center mb-3">
+                        <i class="fa fa-shopping-bag text-xl text-orange-500"></i>
+                    </div>
+                    <h4 class="font-medium" data-translate="site_taobao">淘宝</h4>
+                    <p class="text-xs text-neutral mt-1">taobao.com</p>
+                </a>
+                
+                <a href="https://www.pinterest.com" target="_blank" class="bg-white rounded-xl p-4 flex flex-col items-center text-center card-shadow card-hover relative" data-category="popular social">
+                    <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-3">
+                        <i class="fa fa-pinterest text-xl text-red-600"></i>
+                    </div>
+                    <h4 class="font-medium" data-translate="site_pinterest">Pinterest</h4>
+                    <p class="text-xs text-neutral mt-1">pinterest.com</p>
+                </a>
+            </div>
+        </section>
+        
+        <!-- 网站分类区域 -->
+        <section id="categories" class="mb-16 fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold" data-translate="website_categories">网站分类</h3>
+                <div class="flex space-x-2 overflow-x-auto pb-2 hide-scrollbar">
+                    <button class="category-filter active px-4 py-2 rounded-full bg-primary text-white whitespace-nowrap" data-category="all">
+                        <i class="fa fa-th-large mr-1"></i> <span data-translate="all">全部</span>
+                    </button>
+                    <button class="category-filter px-4 py-2 rounded-full bg-white border border-gray-200 hover:border-primary hover:text-primary transition-colors whitespace-nowrap" data-category="search">
+                        <i class="fa fa-search mr-1"></i> <span data-translate="search_engines">搜索引擎</span>
+                    </button>
+                    <button class="category-filter px-4 py-2 rounded-full bg-white border border-gray-200 hover:border-primary hover:text-primary transition-colors whitespace-nowrap" data-category="social">
+                        <i class="fa fa-users mr-1"></i> <span data-translate="social_media">社交媒体</span>
+                    </button>
+                    <button class="category-filter px-4 py-2 rounded-full bg-white border border-gray-200 hover:border-primary hover:text-primary transition-colors whitespace-nowrap" data-category="video">
+                        <i class="fa fa-video-camera mr-1"></i> <span data-translate="video">视频平台</span>
+                    </button>
+                    <button class="category-filter px-4 py-2 rounded-full bg-white border border-gray-200 hover:border-primary hover:text-primary transition-colors whitespace-nowrap" data-category="shopping">
+                        <i class="fa fa-shopping-bag mr-1"></i> <span data-translate="shopping">购物网站</span>
+                    </button>
+                    <button class="category-filter px-4 py-2 rounded-full bg-white border border-gray-200 hover:border-primary hover:text-primary transition-colors whitespace-nowrap" data-category="education">
+                        <i class="fa fa-graduation-cap mr-1"></i> <span data-translate="education">教育资源</span>
+                    </button>
+                    <button class="category-filter px-4 py-2 rounded-full bg-white border border-gray-200 hover:border-primary hover:text-primary transition-colors whitespace-nowrap" data-category="news">
+                        <i class="fa fa-newspaper-o mr-1"></i> <span data-translate="news_media">新闻媒体</span>
+                    </button>
+                    <button class="category-filter px-4 py-2 rounded-full bg-white border border-gray-200 hover:border-primary hover:text-primary transition-colors whitespace-nowrap" data-category="tools">
+                        <i class="fa fa-wrench mr-1"></i> <span data-translate="tools">实用工具</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 分类内容网格 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 搜索引擎分类 -->
+                <div class="category-card bg-white rounded-xl overflow-hidden card-shadow" data-category="search">
+                    <div class="p-5 border-b border-gray-100">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center mr-3">
+                                <i class="fa fa-search text-blue-500"></i>
+                            </div>
+                            <h4 class="font-bold text-lg" data-translate="search_engines">搜索引擎</h4>
+                        </div>
+                    </div>
+                    <div class="p-5" id="search-sites-container">
+                        <div class="grid grid-cols-2 gap-3">
+                            <a href="https://www.google.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-google text-blue-500 mr-2"></i>
+                                <span data-translate="site_google">谷歌</span>
+                            </a>
+                            <a href="https://www.bing.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-search text-blue-600 mr-2"></i>
+                                <span data-translate="site_bing">必应</span>
+                            </a>
+                            <a href="https://www.baidu.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-paw text-red-500 mr-2"></i>
+                                <span data-translate="site_baidu">百度</span>
+                            </a>
+                            <a href="https://yandex.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-search text-red-600 mr-2"></i>
+                                <span data-translate="site_yandex">Yandex</span>
+                            </a>
+                            <a href="https://www.duckduckgo.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-search text-orange-500 mr-2"></i>
+                                <span data-translate="site_duckduckgo">DuckDuckGo</span>
+                            </a>
+                            <a href="https://www.sogou.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-search text-green-500 mr-2"></i>
+                                <span data-translate="site_sogou">搜狗</span>
+                            </a>
+                        </div>
+                        <a href="#all-sites-modal" class="text-primary text-sm mt-3 inline-block hover:underline view-more-btn" data-translate="view_more" data-category="search">查看更多</a>
+                    </div>
+                </div>
+                
+                <!-- 社交媒体分类 -->
+                <div class="category-card bg-white rounded-xl overflow-hidden card-shadow" data-category="social">
+                    <div class="p-5 border-b border-gray-100">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center mr-3">
+                                <i class="fa fa-users text-purple-500"></i>
+                            </div>
+                            <h4 class="font-bold text-lg" data-translate="social_media">社交媒体</h4>
+                        </div>
+                    </div>
+                    <div class="p-5" id="social-sites-container">
+                        <div class="grid grid-cols-2 gap-3">
+                            <a href="https://www.facebook.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-facebook text-blue-600 mr-2"></i>
+                                <span data-translate="site_facebook">Facebook</span>
+                            </a>
+                            <a href="https://www.twitter.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-twitter text-blue-400 mr-2"></i>
+                                <span data-translate="site_twitter">Twitter</span>
+                            </a>
+                            <a href="https://www.instagram.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-instagram text-pink-500 mr-2"></i>
+                                <span data-translate="site_instagram">Instagram</span>
+                            </a>
+                            <a href="https://www.linkedin.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-linkedin text-blue-700 mr-2"></i>
+                                <span data-translate="site_linkedin">LinkedIn</span>
+                            </a>
+                            <a href="https://www.pinterest.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-pinterest text-red-600 mr-2"></i>
+                                <span data-translate="site_pinterest">Pinterest</span>
+                            </a>
+                            <a href="https://www.reddit.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-reddit text-orange-500 mr-2"></i>
+                                <span data-translate="site_reddit">Reddit</span>
+                            </a>
+                        </div>
+                        <a href="#all-sites-modal" class="text-primary text-sm mt-3 inline-block hover:underline view-more-btn" data-translate="view_more" data-category="social">查看更多</a>
+                    </div>
+                </div>
+                
+                <!-- 视频平台分类 -->
+                <div class="category-card bg-white rounded-xl overflow-hidden card-shadow" data-category="video">
+                    <div class="p-5 border-b border-gray-100">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center mr-3">
+                                <i class="fa fa-video-camera text-red-500"></i>
+                            </div>
+                            <h4 class="font-bold text-lg" data-translate="video_platforms">视频平台</h4>
+                        </div>
+                    </div>
+                    <div class="p-5" id="video-sites-container">
+                        <div class="grid grid-cols-2 gap-3">
+                            <a href="https://www.youtube.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-youtube-play text-red-500 mr-2"></i>
+                                <span data-translate="site_youtube">YouTube</span>
+                            </a>
+                            <a href="https://www.netflix.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-film text-red-600 mr-2"></i>
+                                <span data-translate="site_netflix">Netflix</span>
+                            </a>
+                            <a href="https://www.twitch.tv" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-gamepad text-purple-600 mr-2"></i>
+                                <span data-translate="site_twitch">Twitch</span>
+                            </a>
+                            <a href="https://www.vimeo.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-play-circle text-blue-500 mr-2"></i>
+                                <span data-translate="site_vimeo">Vimeo</span>
+                            </a>
+                            <a href="https://www.dailymotion.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-play text-red-500 mr-2"></i>
+                                <span data-translate="site_dailymotion">Dailymotion</span>
+                            </a>
+                            <a href="https://www.hulu.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-film text-green-600 mr-2"></i>
+                                <span data-translate="site_hulu">Hulu</span>
+                            </a>
+                        </div>
+                        <a href="#all-sites-modal" class="text-primary text-sm mt-3 inline-block hover:underline view-more-btn" data-translate="view_more" data-category="video">查看更多</a>
+                    </div>
+                </div>
+                
+                <!-- 购物网站分类 -->
+                <div class="category-card bg-white rounded-xl overflow-hidden card-shadow" data-category="shopping">
+                    <div class="p-5 border-b border-gray-100">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center mr-3">
+                                <i class="fa fa-shopping-bag text-amber-500"></i>
+                            </div>
+                            <h4 class="font-bold text-lg" data-translate="shopping_sites">购物网站</h4>
+                        </div>
+                    </div>
+                    <div class="p-5" id="shopping-sites-container">
+                        <div class="grid grid-cols-2 gap-3">
+                            <a href="https://www.amazon.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-shopping-cart text-amber-600 mr-2"></i>
+                                <span data-translate="site_amazon">亚马逊</span>
+                            </a>
+                            <a href="https://www.ebay.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-shopping-basket text-blue-500 mr-2"></i>
+                                <span data-translate="site_ebay">eBay</span>
+                            </a>
+                            <a href="https://www.alibaba.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-globe text-orange-500 mr-2"></i>
+                                <span data-translate="site_alibaba">阿里巴巴</span>
+                            </a>
+                            <a href="https://www.walmart.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-shopping-bag text-blue-700 mr-2"></i>
+                                <span data-translate="site_walmart">沃尔玛</span>
+                            </a>
+                            <a href="https://www.taobao.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-shopping-bag text-orange-500 mr-2"></i>
+                                <span data-translate="site_taobao">淘宝</span>
+                            </a>
+                            <a href="https://www.jd.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-shopping-cart text-red-500 mr-2"></i>
+                                <span data-translate="site_jd">京东</span>
+                            </a>
+                        </div>
+                        <a href="#all-sites-modal" class="text-primary text-sm mt-3 inline-block hover:underline view-more-btn" data-translate="view_more" data-category="shopping">查看更多</a>
+                    </div>
+                </div>
+                
+                <!-- 教育资源分类 -->
+                <div class="category-card bg-white rounded-xl overflow-hidden card-shadow" data-category="education">
+                    <div class="p-5 border-b border-gray-100">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center mr-3">
+                                <i class="fa fa-graduation-cap text-green-500"></i>
+                            </div>
+                            <h4 class="font-bold text-lg" data-translate="education_resources">教育资源</h4>
+                        </div>
+                    </div>
+                    <div class="p-5" id="education-sites-container">
+                        <div class="grid grid-cols-2 gap-3">
+                            <a href="https://www.wikipedia.org" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-wikipedia-w text-red-500 mr-2"></i>
+                                <span data-translate="site_wikipedia">维基百科</span>
+                            </a>
+                            <a href="https://www.coursera.org" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-graduation-cap text-blue-500 mr-2"></i>
+                                <span data-translate="site_coursera">Coursera</span>
+                            </a>
+                            <a href="https://www.edx.org" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-university text-green-600 mr-2"></i>
+                                <span data-translate="site_edx">edX</span>
+                            </a>
+                            <a href="https://www.khanacademy.org" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-graduation-cap text-orange-500 mr-2"></i>
+                                <span data-translate="site_khan">可汗学院</span>
+                            </a>
+                            <a href="https://www.udemy.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-graduation-cap text-aqua-500 mr-2"></i>
+                                <span data-translate="site_udemy">Udemy</span>
+                            </a>
+                            <a href="https://www.mooc.org" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-graduation-cap text-purple-500 mr-2"></i>
+                                <span data-translate="site_mooc">MOOC</span>
+                            </a>
+                        </div>
+                        <a href="#all-sites-modal" class="text-primary text-sm mt-3 inline-block hover:underline view-more-btn" data-translate="view_more" data-category="education">查看更多</a>
+                    </div>
+                </div>
+                
+                <!-- 新闻媒体分类 -->
+                <div class="category-card bg-white rounded-xl overflow-hidden card-shadow" data-category="news">
+                    <div class="p-5 border-b border-gray-100">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center mr-3">
+                                <i class="fa fa-newspaper-o text-blue-500"></i>
+                            </div>
+                            <h4 class="font-bold text-lg" data-translate="news_media">新闻媒体</h4>
+                        </div>
+                    </div>
+                    <div class="p-5" id="news-sites-container">
+                        <div class="grid grid-cols-2 gap-3">
+                            <a href="https://www.nytimes.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-newspaper-o text-gray-800 mr-2"></i>
+                                <span data-translate="site_nytimes">纽约时报</span>
+                            </a>
+                            <a href="https://www.bbc.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-bbc text-red-600 mr-2"></i>
+                                <span data-translate="site_bbc">BBC新闻</span>
+                            </a>
+                            <a href="https://www.cnn.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-newspaper-o text-red-500 mr-2"></i>
+                                <span data-translate="site_cnn">CNN</span>
+                            </a>
+                            <a href="https://www.reuters.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-newspaper-o text-blue-700 mr-2"></i>
+                                <span data-translate="site_reuters">路透社</span>
+                            </a>
+                            <a href="https://www.abcnews.go.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-newspaper-o text-blue-500 mr-2"></i>
+                                <span data-translate="site_abc">ABC新闻</span>
+                            </a>
+                            <a href="https://www.nhk.or.jp" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-newspaper-o text-red-600 mr-2"></i>
+                                <span data-translate="site_nhk">NHK新闻</span>
+                            </a>
+                        </div>
+                        <a href="#all-sites-modal" class="text-primary text-sm mt-3 inline-block hover:underline view-more-btn" data-translate="view_more" data-category="news">查看更多</a>
+                    </div>
+                </div>
+                
+                <!-- 实用工具分类 -->
+                <div class="category-card bg-white rounded-xl overflow-hidden card-shadow" data-category="tools">
+                    <div class="p-5 border-b border-gray-100">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center mr-3">
+                                <i class="fa fa-wrench text-gray-600"></i>
+                            </div>
+                            <h4 class="font-bold text-lg" data-translate="tools">实用工具</h4>
+                        </div>
+                    </div>
+                    <div class="p-5" id="tools-sites-container">
+                        <div class="grid grid-cols-2 gap-3">
+                            <a href="https://www.google.com/maps" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-map-marker text-red-500 mr-2"></i>
+                                <span data-translate="site_maps">谷歌地图</span>
+                            </a>
+                            <a href="https://translate.google.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-language text-blue-500 mr-2"></i>
+                                <span data-translate="site_translate">谷歌翻译</span>
+                            </a>
+                            <a href="https://www.dropbox.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-cloud text-blue-500 mr-2"></i>
+                                <span data-translate="site_dropbox">Dropbox</span>
+                            </a>
+                            <a href="https://www.canva.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-paint-brush text-purple-500 mr-2"></i>
+                                <span data-translate="site_canva">Canva</span>
+                            </a>
+                            <a href="https://www.calculator.net" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-calculator text-green-500 mr-2"></i>
+                                <span data-translate="site_calculator">在线计算器</span>
+                            </a>
+                            <a href="https://www.timeanddate.com" target="_blank" class="flex items-center p-2 rounded-lg hover:bg-light transition-colors">
+                                <i class="fa fa-clock-o text-blue-500 mr-2"></i>
+                                <span data-translate="site_time">时间日期</span>
+                            </a>
+                        </div>
+                        <a href="#all-sites-modal" class="text-primary text-sm mt-3 inline-block hover:underline view-more-btn" data-translate="view_more" data-category="tools">查看更多</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 添加网站区域 -->
+        <section id="add-site" class="mb-16 bg-gradient-to-r from-primary/5 to-accent/5 rounded-2xl p-6 md:p-8 fade-in">
+            <div class="max-w-3xl mx-auto">
+                <h3 class="text-2xl font-bold mb-4" data-translate="suggest_website">推荐新网站</h3>
+                <p class="text-neutral mb-6" data-translate="suggest_desc">知道一个很棒的网站应该被收录？请填写下面的表单推荐给我们，我们会尽快审核并添加。</p>
+                
+                <form id="suggest-site-form" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="site-name" class="block text-sm font-medium mb-1" data-translate="site_name">网站名称</label>
+                            <input type="text" id="site-name" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all" required="">
+                        </div>
+                        <div>
+                            <label for="site-url" class="block text-sm font-medium mb-1" data-translate="site_url">网站网址</label>
+                            <input type="url" id="site-url" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all" placeholder="https://" required="">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="site-category" class="block text-sm font-medium mb-1" data-translate="site_category">网站分类</label>
+                        <select id="site-category" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all" required="">
+                            <option value="" data-translate="select_category">请选择分类</option>
+                            <option value="search" data-translate="search_engines">搜索引擎</option>
+                            <option value="social" data-translate="social_media">社交媒体</option>
+                            <option value="video" data-translate="video_platforms">视频平台</option>
+                            <option value="shopping" data-translate="shopping_sites">购物网站</option>
+                            <option value="education" data-translate="education_resources">教育资源</option>
+                            <option value="news" data-translate="news_media">新闻媒体</option>
+                            <option value="tools" data-translate="tools">实用工具</option>
+                            <option value="other" data-translate="other">其他</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="site-description" class="block text-sm font-medium mb-1" data-translate="site_description">网站描述</label>
+                        <textarea id="site-description" rows="3" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all" placeholder="请简要描述这个网站的功能和特点..." required=""></textarea>
+                    </div>
+                    
+                    <div>
+                        <label for="site-language" class="block text-sm font-medium mb-1" data-translate="site_language">网站主要语言</label>
+                        <select id="site-language" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all" required="">
+                            <option value="zh" data-translate="lang_chinese">中文</option>
+                            <option value="en" data-translate="lang_english">英语</option>
+                            <option value="ja" data-translate="lang_japanese">日语</option>
+                            <option value="ko" data-translate="lang_korean">韩语</option>
+                            <option value="fr" data-translate="lang_french">法语</option>
+                            <option value="es" data-translate="lang_spanish">西班牙语</option>
+                            <option value="de" data-translate="lang_german">德语</option>
+                            <option value="ru" data-translate="lang_russian">俄语</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex justify-end">
+                        <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center">
+                            <i class="fa fa-paper-plane mr-2"></i>
+                            <span data-translate="submit_suggestion">提交推荐</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="bg-white border-t border-gray-200 py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="text-primary text-2xl">
+                            <i class="fa fa-globe"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-primary">WebLink<span class="text-accent">Hub</span></h2>
+                    </div>
+                    <p class="text-neutral mb-4" data-translate="footer_desc">全球网址导航平台，助您轻松探索世界各地的优质网络资源。</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-neutral hover:text-primary transition-colors"><i class="fa fa-facebook"></i></a>
+                        <a href="#" class="text-neutral hover:text-primary transition-colors"><i class="fa fa-twitter"></i></a>
+                        <a href="#" class="text-neutral hover:text-primary transition-colors"><i class="fa fa-instagram"></i></a>
+                        <a href="#" class="text-neutral hover:text-primary transition-colors"><i class="fa fa-linkedin"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold mb-4" data-translate="quick_links">快速链接</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-neutral hover:text-primary transition-colors" data-translate="about_us">关于我们</a></li>
+                        <li><a href="#" class="text-neutral hover:text-primary transition-colors" data-translate="contact_us">联系我们</a></li>
+                        <li><a href="#" class="text-neutral hover:text-primary transition-colors" data-translate="privacy_policy">隐私政策</a></li>
+                        <li><a href="#" class="text-neutral hover:text-primary transition-colors" data-translate="terms_of_service">服务条款</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold mb-4" data-translate="site_categories">网站分类</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#categories" class="text-neutral hover:text-primary transition-colors" data-translate="search_engines">搜索引擎</a></li>
+                        <li><a href="#categories" class="text-neutral hover:text-primary transition-colors" data-translate="social_media">社交媒体</a></li>
+                        <li><a href="#categories" class="text-neutral hover:text-primary transition-colors" data-translate="shopping_sites">购物网站</a></li>
+                        <li><a href="#categories" class="text-neutral hover:text-primary transition-colors" data-translate="education_resources">教育资源</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold mb-4" data-translate="newsletter">订阅通讯</h3>
+                    <p class="text-neutral mb-4" data-translate="newsletter_desc">获取最新网站推荐和网络资源信息</p>
+                    <form class="flex">
+                        <input type="email" placeholder="您的邮箱地址" class="flex-1 px-4 py-2 rounded-l-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all">
+                        <button type="submit" class="bg-primary text-white px-4 py-2 rounded-r-lg hover:bg-primary/90 transition-colors">
+                            <i class="fa fa-envelope"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-200 mt-8 pt-6 text-center text-neutral text-sm" data-translate="copyright">
+                © 2023 WebLinkHub 全球网址大全. 保留所有权利.
+            </div>
+            
+            <!-- 保护信息将通过JS动态添加 -->
+            <div id="protected-info-container" class="mt-4 text-center"></div>
+        </div>
+    </footer>
+    
+    <!-- 所有网站模态框 -->
+    <div id="all-sites-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden modal-backdrop">
+        <div class="modal-content bg-white rounded-xl max-w-4xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+            <div class="p-5 border-b border-gray-100 flex justify-between items-center">
+                <h3 class="text-xl font-bold" id="modal-title" data-translate="all_sites">所有网站</h3>
+                <button id="close-modal" class="text-neutral hover:text-dark transition-colors">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="p-5 flex-1 overflow-y-auto">
+                <div class="relative mb-5">
+                    <input type="text" id="modal-search" class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all" placeholder="搜索网站...">
+                    <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-neutral"></i>
+                </div>
+                
+                <div id="modal-sites-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- 网站内容将通过JavaScript动态填充 -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 通知提示框 -->
+    <div id="toast-notification" class="toast fixed bottom-5 right-5 bg-dark text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center">
+        <i id="toast-icon" class="fa fa-check-circle mr-2"></i>
+        <span id="toast-message"></span>
+    </div>
+
+    <script>
+        // 语言翻译数据
+        const translations = {
+            en: {
+                welcome_title: "Global Website Directory",
+                welcome_desc: "Discover quality websites from around the world with automatic translation in multiple languages.",
+                stats_sites: "Number of Sites",
+                stats_categories: "Number of Categories",
+                stats_languages: "Supported Languages",
+                stats_users: "Monthly Active Users",
+                popular_sites: "Popular Sites",
+                view_all: "View All",
+                website_categories: "Website Categories",
+                all: "All",
+                search_engines: "Search Engines",
+                social_media: "Social Media",
+                video: "Video Platforms",
+                shopping: "Shopping Sites",
+                education: "Educational Resources",
+                news_media: "News Media",
+                tools: "Utilities",
+                site_google: "Google",
+                site_youtube: "YouTube",
+                site_facebook: "Facebook",
+                site_twitter: "Twitter",
+                site_wikipedia: "Wikipedia",
+                site_amazon: "Amazon",
+                site_instagram: "Instagram",
+                site_netflix: "Netflix",
+                site_baidu: "Baidu",
+                site_linkedin: "LinkedIn",
+                site_taobao: "Taobao",
+                site_pinterest: "Pinterest",
+                site_bing: "Bing",
+                site_yandex: "Yandex",
+                site_duckduckgo: "DuckDuckGo",
+                site_sogou: "Sogou",
+                site_reddit: "Reddit",
+                site_twitch: "Twitch",
+                site_vimeo: "Vimeo",
+                site_dailymotion: "Dailymotion",
+                site_hulu: "Hulu",
+                site_ebay: "eBay",
+                site_alibaba: "Alibaba",
+                site_walmart: "Walmart",
+                site_jd: "JD.com",
+                site_coursera: "Coursera",
+                site_edx: "edX",
+                site_khan: "Khan Academy",
+                site_udemy: "Udemy",
+                site_mooc: "MOOC",
+                site_nytimes: "New York Times",
+                site_bbc: "BBC News",
+                site_cnn: "CNN",
+                site_reuters: "Reuters",
+                site_abc: "ABC News",
+                site_nhk: "NHK News",
+                site_maps: "Google Maps",
+                site_translate: "Google Translate",
+                site_dropbox: "Dropbox",
+                site_canva: "Canva",
+                site_calculator: "Calculator",
+                site_time: "Time & Date",
+                view_more: "View More",
+                suggest_website: "Suggest a Website",
+                suggest_desc: "Know a great website that should be included? Fill out the form below to recommend it to us.",
+                site_name: "Website Name",
+                site_url: "Website URL",
+                site_category: "Website Category",
+                select_category: "Select Category",
+                shopping_sites: "Shopping Sites",
+                video_platforms: "Video Platforms",
+                education_resources: "Educational Resources",
+                other: "Other",
+                site_description: "Website Description",
+                site_language: "Primary Language",
+                lang_chinese: "Chinese",
+                lang_english: "English",
+                lang_japanese: "Japanese",
+                lang_korean: "Korean",
+                lang_french: "French",
+                lang_spanish: "Spanish",
+                lang_german: "German",
+                lang_russian: "Russian",
+                submit_suggestion: "Submit Suggestion",
+                all_sites: "All Sites",
+                quick_links: "Quick Links",
+                about_us: "About Us",
+                contact_us: "Contact Us",
+                privacy_policy: "Privacy Policy",
+                terms_of_service: "Terms of Service",
+                site_categories: "Site Categories",
+                newsletter: "Newsletter",
+                newsletter_desc: "Get the latest website recommendations",
+                copyright: "&copy; 2023 WebLinkHub. All rights reserved.",
+                footer_desc: "A global website directory helping you explore quality online resources worldwide.",
+                all_sites: "All Websites",
+                form_submit_success: "Thank you for your suggestion! The website has been added successfully.",
+                form_submit_error: "There was an error submitting your form. Please try again.",
+                new_site: "New"
+            },
+            ja: {
+                welcome_title: "グローバルウェブサイトディレクトリ",
+                welcome_desc: "世界中の優れたウェブサイトを発見し、複数言語で自動翻訳をサポートします。",
+                stats_sites: "サイト数",
+                stats_categories: "カテゴリ数",
+                stats_languages: "サポート言語",
+                stats_users: "月間アクティブユーザー",
+                popular_sites: "人気サイト",
+                view_all: "すべて表示",
+                website_categories: "ウェブサイトカテゴリ",
+                all: "すべて",
+                search_engines: "検索エンジン",
+                social_media: "ソーシャルメディア",
+                video: "動画プラットフォーム",
+                shopping: "ショッピングサイト",
+                education: "教育リソース",
+                news_media: "ニュースメディア",
+                tools: "ユーティリティ",
+                site_google: "グーグル",
+                site_youtube: "YouTube",
+                site_facebook: "フェイスブック",
+                site_twitter: "ツイッター",
+                site_wikipedia: "ウィキペディア",
+                site_amazon: "アマゾン",
+                view_more: "さらに表示",
+                suggest_website: "ウェブサイトを推薦",
+                form_submit_success: "推薦ありがとうございます！ウェブサイトが正常に追加されました。",
+                new_site: "新着"
+                // 其他翻译...
+            },
+            // 其他语言翻译...
+            ko: {
+                welcome_title: "글로벌 웹사이트 디렉토리",
+                welcome_desc: "전 세계의 우수한 웹사이트를 발견하고 다양한 언어로 자동 번역을 지원합니다.",
+                new_site: "새로운"
+                // 其他翻译...
+            },
+            fr: {
+                welcome_title: "Annuaire global de sites web",
+                welcome_desc: "Découvrez des sites web de qualité du monde entier avec traduction automatique en plusieurs langues.",
+                new_site: "Nouveau"
+                // 其他翻译...
+            },
+            es: {
+                welcome_title: "Directorio global de sitios web",
+                welcome_desc: "Descubre sitios web de calidad de todo el mundo con traducción automática en múltiples idiomas.",
+                new_site: "Nuevo"
+                // 其他翻译...
+            }
+        };
+
+        // 网站数据
+        let websites = [
+            // 搜索引擎
+            { name: "谷歌", url: "https://www.google.com", icon: "fa-google", color: "text-blue-500", category: "search", popular: true },
+            { name: "必应", url: "https://www.bing.com", icon: "fa-search", color: "text-blue-600", category: "search", popular: true },
+            { name: "百度", url: "https://www.baidu.com", icon: "fa-paw", color: "text-red-500", category: "search", popular: true },
+            { name: "Yandex", url: "https://yandex.com", icon: "fa-search", color: "text-red-600", category: "search" },
+            { name: "DuckDuckGo", url: "https://duckduckgo.com", icon: "fa-search", color: "text-orange-500", category: "search" },
+            { name: "搜狗", url: "https://www.sogou.com", icon: "fa-search", color: "text-green-500", category: "search" },
+            
+            // 社交媒体
+            { name: "Facebook", url: "https://www.facebook.com", icon: "fa-facebook", color: "text-blue-600", category: "social", popular: true },
+            { name: "Twitter", url: "https://www.twitter.com", icon: "fa-twitter", color: "text-blue-400", category: "social", popular: true },
+            { name: "Instagram", url: "https://www.instagram.com", icon: "fa-instagram", color: "text-pink-500", category: "social", popular: true },
+            { name: "LinkedIn", url: "https://www.linkedin.com", icon: "fa-linkedin", color: "text-blue-700", category: "social", popular: true },
+            { name: "Pinterest", url: "https://www.pinterest.com", icon: "fa-pinterest", color: "text-red-600", category: "social", popular: true },
+            { name: "Reddit", url: "https://www.reddit.com", icon: "fa-reddit", color: "text-orange-500", category: "social" },
+            { name: "Snapchat", url: "https://www.snapchat.com", icon: "fa-snapchat-ghost", color: "text-yellow-500", category: "social" },
+            
+            // 视频平台
+            { name: "YouTube", url: "https://www.youtube.com", icon: "fa-youtube-play", color: "text-red-500", category: "video", popular: true },
+            { name: "Netflix", url: "https://www.netflix.com", icon: "fa-film", color: "text-red-600", category: "video", popular: true },
+            { name: "Twitch", url: "https://www.twitch.tv", icon: "fa-gamepad", color: "text-purple-600", category: "video" },
+            { name: "Vimeo", url: "https://www.vimeo.com", icon: "fa-play-circle", color: "text-blue-500", category: "video" },
+            { name: "Dailymotion", url: "https://www.dailymotion.com", icon: "fa-play", color: "text-red-500", category: "video" },
+            { name: "Hulu", url: "https://www.hulu.com", icon: "fa-film", color: "text-green-600", category: "video" },
+            
+            // 购物网站
+            { name: "亚马逊", url: "https://www.amazon.com", icon: "fa-shopping-cart", color: "text-amber-600", category: "shopping", popular: true },
+            { name: "eBay", url: "https://www.ebay.com", icon: "fa-shopping-basket", color: "text-blue-500", category: "shopping" },
+            { name: "阿里巴巴", url: "https://www.alibaba.com", icon: "fa-globe", color: "text-orange-500", category: "shopping" },
+            { name: "沃尔玛", url: "https://www.walmart.com", icon: "fa-shopping-bag", color: "text-blue-700", category: "shopping" },
+            { name: "淘宝", url: "https://www.taobao.com", icon: "fa-shopping-bag", color: "text-orange-500", category: "shopping", popular: true },
+            { name: "京东", url: "https://www.jd.com", icon: "fa-shopping-cart", color: "text-red-500", category: "shopping" },
+            { name: "Etsy", url: "https://www.etsy.com", icon: "fa-shopping-bag", color: "text-pink-500", category: "shopping" },
+            
+            // 教育资源
+            { name: "维基百科", url: "https://www.wikipedia.org", icon: "fa-wikipedia-w", color: "text-red-500", category: "education", popular: true },
+            { name: "Coursera", url: "https://www.coursera.org", icon: "fa-graduation-cap", color: "text-blue-500", category: "education" },
+            { name: "edX", url: "https://www.edx.org", icon: "fa-university", color: "text-green-600", category: "education" },
+            { name: "可汗学院", url: "https://www.khanacademy.org", icon: "fa-graduation-cap", color: "text-orange-500", category: "education" },
+            { name: "Udemy", url: "https://www.udemy.com", icon: "fa-graduation-cap", color: "text-aqua-500", category: "education" },
+            { name: "MOOC", url: "https://www.mooc.org", icon: "fa-graduation-cap", color: "text-purple-500", category: "education" },
+            
+            // 新闻媒体
+            { name: "纽约时报", url: "https://www.nytimes.com", icon: "fa-newspaper-o", color: "text-gray-800", category: "news" },
+            { name: "BBC新闻", url: "https://www.bbc.com", icon: "fa-bbc", color: "text-red-600", category: "news" },
+            { name: "CNN", url: "https://www.cnn.com", icon: "fa-newspaper-o", color: "text-red-500", category: "news" },
+            { name: "路透社", url: "https://www.reuters.com", icon: "fa-newspaper-o", color: "text-blue-700", category: "news" },
+            { name: "ABC新闻", url: "https://www.abcnews.go.com", icon: "fa-newspaper-o", color: "text-blue-500", category: "news" },
+            { name: "NHK新闻", url: "https://www.nhk.or.jp", icon: "fa-newspaper-o", color: "text-red-600", category: "news" },
+            
+            // 实用工具
+            { name: "谷歌地图", url: "https://www.google.com/maps", icon: "fa-map-marker", color: "text-red-500", category: "tools" },
+            { name: "谷歌翻译", url: "https://translate.google.com", icon: "fa-language", color: "text-blue-500", category: "tools" },
+            { name: "Dropbox", url: "https://www.dropbox.com", icon: "fa-cloud", color: "text-blue-500", category: "tools" },
+            { name: "Canva", url: "https://www.canva.com", icon: "fa-paint-brush", color: "text-purple-500", category: "tools" },
+            { name: "在线计算器", url: "https://www.calculator.net", icon: "fa-calculator", color: "text-green-500", category: "tools" },
+            { name: "时间日期", url: "https://www.timeanddate.com", icon: "fa-clock-o", color: "text-blue-500", category: "tools" }
+        ];
+
+        // 添加保护信息的函数
+        function addProtectedInfo() {
+            // 使用字符编码和拼接方式生成文本，增加直接修改难度
+                const part1 = String.fromCharCode(35199, 25968); 
+    const part2 = String.fromCharCode(36164, 28304, 32593); 
+    const part3 = String.fromCharCode(39318, 21457); 
+    const domain = ['w', 'w', 'w', '.', 'x', 'i', 's', 'h', 'u', 'z', 'y', '.', 'c', 'o', 'm'].join('');
+    
+    const protectedText = `${part1}${part2}${part3} ${domain}`;
+            
+            // 创建元素
+            const container = document.getElementById('protected-info-container');
+            const infoElement = document.createElement('div');
+            infoElement.className = 'text-neutral text-sm protected-info';
+            infoElement.textContent = protectedText;
+            
+            // 添加到页面
+            container.appendChild(infoElement);
+            
+            // 添加完整性检查
+            setInterval(() => {
+                const currentElement = document.querySelector('.protected-info');
+                if (!currentElement || currentElement.textContent !== protectedText) {
+                    // 如果内容被修改，尝试恢复
+                    container.innerHTML = '';
+                    container.appendChild(infoElement);
+                }
+            }, 1000);
+        }
+
+        // 添加新网站到页面
+        function addNewWebsiteToUI(newSite) {
+            // 1. 添加到网站数据数组
+            websites.push(newSite);
+            
+            // 2. 添加到对应分类的容器中
+            const categoryContainer = document.getElementById(`${newSite.category}-sites-container`);
+            if (categoryContainer) {
+                // 创建新网站链接元素
+                const newSiteLink = document.createElement('a');
+                newSiteLink.href = newSite.url;
+                newSiteLink.target = '_blank';
+                newSiteLink.className = 'flex items-center p-2 rounded-lg hover:bg-light transition-colors fade-in';
+                newSiteLink.innerHTML = `
+                    <i class="fa ${newSite.icon} ${newSite.color} mr-2"></i>
+                    <span>${newSite.name}</span>
+                `;
+                
+                // 添加到分类容器的开头
+                categoryContainer.querySelector('.grid').prepend(newSiteLink);
+            }
+            
+            // 3. 如果是热门网站，添加到热门网站区域
+            if (newSite.popular) {
+                const popularContainer = document.getElementById('popular-sites-container');
+                if (popularContainer) {
+                    const newPopularSite = document.createElement('a');
+                    newPopularSite.href = newSite.url;
+                    newPopularSite.target = '_blank';
+                    newPopularSite.className = 'bg-white rounded-xl p-4 flex flex-col items-center text-center card-shadow card-hover relative fade-in';
+                    newPopularSite.setAttribute('data-category', `popular ${newSite.category}`);
+                    newPopularSite.innerHTML = `
+                        <div class="new-site-badge" data-translate="new_site">${getTranslatedText('new_site')}</div>
+                        <div class="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center mb-3">
+                            <i class="fa ${newSite.icon} text-xl ${newSite.color}"></i>
+                        </div>
+                        <h4 class="font-medium">${newSite.name}</h4>
+                        <p class="text-xs text-neutral mt-1">${new URL(newSite.url).hostname}</p>
+                    `;
+                    
+                    // 添加到热门网站容器的开头
+                    popularContainer.prepend(newPopularSite);
+                }
+            }
+            
+            // 4. 更新模态框中的网站列表（如果模态框是打开的）
+            const modal = document.getElementById('all-sites-modal');
+            if (!modal.classList.contains('hidden')) {
+                const currentCategory = getCategoryFromTitle(document.getElementById('modal-title').textContent);
+                const searchTerm = document.getElementById('modal-search').value;
+                populateModalSites(currentCategory, searchTerm);
+            }
+        }
+
+        // DOM元素加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加保护信息
+            addProtectedInfo();
+            
+            // 初始化语言
+            setLanguage('zh');
+            
+            // 移动端菜单切换
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // 导航栏滚动效果
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('py-2', 'shadow');
+                    navbar.classList.remove('py-3', 'shadow-sm');
+                } else {
+                    navbar.classList.add('py-3', 'shadow-sm');
+                    navbar.classList.remove('py-2', 'shadow');
+                }
+            });
+            
+            // 分类筛选功能
+            const categoryFilters = document.querySelectorAll('.category-filter');
+            const categoryCards = document.querySelectorAll('.category-card');
+            
+            categoryFilters.forEach(filter => {
+                filter.addEventListener('click', function() {
+                    // 更新活跃状态
+                    categoryFilters.forEach(f => {
+                        f.classList.remove('active', 'bg-primary', 'text-white');
+                        f.classList.add('bg-white', 'border', 'border-gray-200', 'hover:border-primary', 'hover:text-primary');
+                    });
+                    
+                    this.classList.add('active', 'bg-primary', 'text-white');
+                    this.classList.remove('bg-white', 'border', 'border-gray-200', 'hover:border-primary', 'hover:text-primary');
+                    
+                    const category = this.getAttribute('data-category');
+                    
+                    // 筛选分类卡片
+                    categoryCards.forEach(card => {
+                        if (category === 'all' || card.getAttribute('data-category') === category) {
+                            card.style.display = 'block';
+                            setTimeout(() => {
+                                card.classList.add('fade-in');
+                            }, 10);
+                        } else {
+                            card.classList.remove('fade-in');
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // 语言切换功能
+            const languageOptions = document.querySelectorAll('.language-option');
+            const currentLanguageEl = document.getElementById('current-language');
+            
+            languageOptions.forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const lang = this.getAttribute('data-lang');
+                    setLanguage(lang);
+                    
+                    // 更新当前语言显示
+                    currentLanguageEl.textContent = this.textContent;
+                    
+                    // 更新新网站标记的翻译
+                    document.querySelectorAll('.new-site-badge').forEach(badge => {
+                        badge.textContent = getTranslatedText('new_site');
+                    });
+                });
+            });
+            
+            // 查看更多按钮功能
+            const viewMoreBtns = document.querySelectorAll('.view-more-btn');
+            const allSitesModal = document.getElementById('all-sites-modal');
+            const closeModalBtn = document.getElementById('close-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalSitesContainer = document.getElementById('modal-sites-container');
+            const modalSearchInput = document.getElementById('modal-search');
+            
+            viewMoreBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const category = this.getAttribute('data-category');
+                    
+                    // 设置模态框标题
+                    if (category === 'popular') {
+                        modalTitle.textContent = getTranslatedText('popular_sites');
+                    } else if (category === 'all') {
+                        modalTitle.textContent = getTranslatedText('all_sites');
+                    } else {
+                        // 根据分类设置标题
+                        const categoryNames = {
+                            'search': 'search_engines',
+                            'social': 'social_media',
+                            'video': 'video_platforms',
+                            'shopping': 'shopping_sites',
+                            'education': 'education_resources',
+                            'news': 'news_media',
+                            'tools': 'tools'
+                        };
+                        modalTitle.textContent = getTranslatedText(categoryNames[category] || 'all_sites');
+                    }
+                    
+                    // 显示模态框
+                    allSitesModal.classList.remove('hidden');
+                    allSitesModal.classList.add('modal-open');
+                    document.body.style.overflow = 'hidden';
+                    
+                    // 填充模态框内容
+                    populateModalSites(category);
+                    
+                    // 清空搜索框
+                    modalSearchInput.value = '';
+                });
+            });
+            
+            // 关闭模态框
+            closeModalBtn.addEventListener('click', function() {
+                allSitesModal.classList.add('hidden');
+                allSitesModal.classList.remove('modal-open');
+                document.body.style.overflow = '';
+            });
+            
+            // 点击模态框背景关闭
+            allSitesModal.addEventListener('click', function(e) {
+                if (e.target === allSitesModal) {
+                    allSitesModal.classList.add('hidden');
+                    allSitesModal.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                }
+            });
+            
+            // 模态框内搜索功能
+            modalSearchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const category = modalTitle.textContent === getTranslatedText('popular_sites') ? 'popular' : 
+                                 modalTitle.textContent === getTranslatedText('all_sites') ? 'all' : 
+                                 getCategoryFromTitle(modalTitle.textContent);
+                
+                populateModalSites(category, searchTerm);
+            });
+            
+            // 推荐网站表单提交
+            const suggestForm = document.getElementById('suggest-site-form');
+            suggestForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // 获取表单数据
+                const siteName = document.getElementById('site-name').value;
+                const siteUrl = document.getElementById('site-url').value;
+                const siteCategory = document.getElementById('site-category').value;
+                const siteDescription = document.getElementById('site-description').value;
+                const siteLanguage = document.getElementById('site-language').value;
+                
+                // 简单验证
+                if (siteName && siteUrl && siteCategory && siteDescription) {
+                    // 生成新网站数据
+                    // 为新网站选择一个默认图标和颜色
+                    const categoryIcons = {
+                        'search': { icon: 'fa-search', color: 'text-blue-500' },
+                        'social': { icon: 'fa-users', color: 'text-purple-500' },
+                        'video': { icon: 'fa-video-camera', color: 'text-red-500' },
+                        'shopping': { icon: 'fa-shopping-bag', color: 'text-amber-500' },
+                        'education': { icon: 'fa-graduation-cap', color: 'text-green-500' },
+                        'news': { icon: 'fa-newspaper-o', color: 'text-blue-500' },
+                        'tools': { icon: 'fa-wrench', color: 'text-gray-600' },
+                        'other': { icon: 'fa-globe', color: 'text-accent' }
+                    };
+                    
+                    const iconInfo = categoryIcons[siteCategory] || categoryIcons['other'];
+                    
+                    const newSite = {
+                        name: siteName,
+                        url: siteUrl,
+                        icon: iconInfo.icon,
+                        color: iconInfo.color,
+                        category: siteCategory,
+                        popular: false, // 默认为非热门网站，可以根据需要修改
+                        language: siteLanguage,
+                        description: siteDescription
+                    };
+                    
+                    // 添加新网站到页面
+                    addNewWebsiteToUI(newSite);
+                    
+                    // 显示成功提示
+                    showToast('success', getTranslatedText('form_submit_success'));
+                    
+                    // 重置表单
+                    suggestForm.reset();
+                    
+                    // 滚动到对应分类区域
+                    document.getElementById('categories').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    showToast('error', getTranslatedText('form_submit_error'));
+                }
+            });
+            
+            // 搜索功能
+            const searchInputs = [
+                document.getElementById('search-input'),
+                document.getElementById('mobile-search-input')
+            ];
+            
+            searchInputs.forEach(input => {
+                if (input) {
+                    input.addEventListener('input', function() {
+                        const searchTerm = this.value.toLowerCase();
+                        filterWebsites(searchTerm);
+                    });
+                }
+            });
+        });
+        
+        // 设置语言
+        function setLanguage(lang) {
+            if (!translations[lang]) return;
+            
+            const elements = document.querySelectorAll('[data-translate]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-translate');
+                if (translations[lang][key]) {
+                    el.textContent = translations[lang][key];
+                }
+            });
+            
+            // 更新页面语言属性
+            document.documentElement.lang = lang;
+        }
+        
+        // 获取翻译文本
+        function getTranslatedText(key) {
+            const currentLang = document.documentElement.lang || 'zh';
+            return translations[currentLang] && translations[currentLang][key] ? translations[currentLang][key] : key;
+        }
+        
+        // 填充模态框网站内容
+        function populateModalSites(category, searchTerm = '') {
+            const modalSitesContainer = document.getElementById('modal-sites-container');
+            modalSitesContainer.innerHTML = '';
+            
+            // 筛选网站
+            let filteredSites = websites.filter(site => {
+                // 分类筛选
+                if (category === 'popular' && !site.popular) return false;
+                if (category !== 'all' && category !== 'popular' && site.category !== category) return false;
+                
+                // 搜索筛选
+                if (searchTerm && !site.name.toLowerCase().includes(searchTerm)) return false;
+                
+                return true;
+            });
+            
+            // 如果没有结果
+            if (filteredSites.length === 0) {
+                modalSitesContainer.innerHTML = `
+                    <div class="col-span-full text-center py-10">
+                        <i class="fa fa-search text-4xl text-neutral mb-3"></i>
+                        <p class="text-neutral" data-translate="no_results">没有找到匹配的网站</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 生成网站卡片
+            filteredSites.forEach(site => {
+                const siteCard = document.createElement('a');
+                siteCard.href = site.url;
+                siteCard.target = '_blank';
+                siteCard.className = 'bg-white rounded-lg p-3 flex items-center card-shadow hover:shadow-md transition-shadow';
+                
+                // 检查是否是新添加的网站（没有原始数据中的属性）
+                const isNew = !site.hasOwnProperty('original');
+                
+                siteCard.innerHTML = `
+                    ${isNew ? `<div class="new-site-badge absolute top-2 right-2" data-translate="new_site">${getTranslatedText('new_site')}</div>` : ''}
+                    <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-3">
+                        <i class="fa ${site.icon} ${site.color}"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-medium">${site.name}</h4>
+                        <p class="text-xs text-neutral">${new URL(site.url).hostname}</p>
+                    </div>
+                `;
+                
+                modalSitesContainer.appendChild(siteCard);
+            });
+        }
+        
+        // 从标题获取分类
+        function getCategoryFromTitle(title) {
+            const categoryMap = {
+                'search_engines': 'search',
+                'social_media': 'social',
+                'video_platforms': 'video',
+                'shopping_sites': 'shopping',
+                'education_resources': 'education',
+                'news_media': 'news',
+                'tools': 'tools'
+            };
+            
+            for (const [key, value] of Object.entries(categoryMap)) {
+                if (title === getTranslatedText(key)) {
+                    return value;
+                }
+            }
+            
+            return 'all';
+        }
+        
+        // 显示提示框
+        function showToast(type, message) {
+            const toast = document.getElementById('toast-notification');
+            const toastIcon = document.getElementById('toast-icon');
+            const toastMessage = document.getElementById('toast-message');
+            
+            // 设置图标
+            if (type === 'success') {
+                toastIcon.className = 'fa fa-check-circle mr-2 text-green-500';
+            } else if (type === 'error') {
+                toastIcon.className = 'fa fa-exclamation-circle mr-2 text-red-500';
+            }
+            
+            // 设置消息
+            toastMessage.textContent = message;
+            
+            // 显示提示框
+            toast.classList.add('show');
+            
+            // 3秒后隐藏
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 筛选网站
+        function filterWebsites(searchTerm) {
+            if (!searchTerm) {
+                // 如果搜索词为空，显示所有网站
+                document.querySelectorAll('.category-card, [data-category]').forEach(el => {
+                    el.style.display = '';
+                });
+                return;
+            }
+            
+            // 筛选热门网站
+            document.querySelectorAll('#popular [data-category]').forEach(site => {
+                const siteName = site.querySelector('h4').textContent.toLowerCase();
+                const siteUrl = site.querySelector('p').textContent.toLowerCase();
+                
+                if (siteName.includes(searchTerm) || siteUrl.includes(searchTerm)) {
+                    site.style.display = '';
+                } else {
+                    site.style.display = 'none';
+                }
+            });
+            
+            // 筛选分类网站
+            document.querySelectorAll('.category-card').forEach(card => {
+                let hasMatchingSite = false;
+                
+                card.querySelectorAll('a').forEach(link => {
+                    const siteName = link.querySelector('span')?.textContent.toLowerCase() || '';
+                    if (siteName.includes(searchTerm)) {
+                        hasMatchingSite = true;
+                        link.style.display = '';
+                    } else {
+                        link.style.display = 'none';
+                    }
+                });
+                
+                // 显示或隐藏整个分类卡片
+                if (hasMatchingSite) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+
+
+    </body></html>
+    
